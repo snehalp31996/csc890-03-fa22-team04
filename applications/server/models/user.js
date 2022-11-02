@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const Joi = require("joi");
-const passwordComplexity = require("joi-password-complexity");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
@@ -9,6 +8,27 @@ const userSchema = new mongoose.Schema({
   userType: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  date: { type: Date, default: Date.now },
+  feedbacks: [
+    {
+      email: {
+        type: String,
+        required: true,
+      },
+      question: {
+        type: String,
+        required: true,
+      },
+      answer: {
+        type: String,
+        required: true,
+      },
+      feedback: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
   tokens: [
     {
       token: {
@@ -30,19 +50,35 @@ userSchema.methods.generateAuthToken = async function () {
   }
 };
 
-//user model
-const User = mongoose.model("user", userSchema);
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
+  next();
+});
 
-const validate = (data) => {
-  const schema = Joi.object({
-    firstName: Joi.string().required().label("First Name"),
-    lastName: Joi.string().required().label("Last Name"),
-    userType: Joi.string().required().label("User Type"),
-    email: Joi.string().email().required().label("Email"),
-    password: passwordComplexity().required().label("Password"),
-  });
-
-  return schema.validate(data);
+//store data
+userSchema.methods.addFeedback = async function (
+  email,
+  question,
+  answer,
+  feedback
+) {
+  try {
+    this.feedbacks = this.feedbacks.concat({
+      email,
+      question,
+      answer,
+      feedback,
+    });
+    await this.save();
+    return this.feedbacks;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-module.exports = { User, validate };
+//user model
+const User = mongoose.model("USER", userSchema);
+
+module.exports = User;
