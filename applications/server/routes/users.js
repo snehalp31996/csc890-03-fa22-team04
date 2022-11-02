@@ -1,30 +1,28 @@
 const router = require("express").Router();
-const { User, validate } = require("../models/user");
-const bcrypt = require("bcrypt");
+const User = require("../models/user");
 
 router.post("/", async (req, res) => {
-  try {
-    console.log(req.body);
-    const { error } = validate(req.body);
-    if (error)
-      return res.status(400).send({ message: error.details[0].message });
+  const { firstName, lastName, email, userType, password } = req.body;
 
-    //check whether user with same email exists or not
-    const user = await User.findOne({ email: req.body.email });
-    if (user)
+  if (!firstName || !lastName || !email || !userType || !password) {
+    return res.status(422).json({ error: "Please fill the details properly" });
+  }
+  try {
+    const userExist = await User.findOne({ email: email });
+
+    if (userExist)
       return res
         .status(409)
-        .send({ message: "User with given email already exists" });
+        .json({ message: "User with given email already exists" });
 
-    const salt = await bcrypt.genSalt(Number(process.env.SALT));
-    const hashPassword = await bcrypt.hash(req.body.password, salt);
+    const user = new User({ firstName, lastName, email, userType, password });
 
-    await new User({ ...req.body, password: hashPassword }).save();
+    await user.save();
 
-    res.status(201).send({ message: "User created successfully" });
+    res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
