@@ -1,38 +1,39 @@
-import React from "react";
+import React, { useContext } from "react";
 import Image from "react-bootstrap/Image";
 import accountImg from "../../assets/Account/account.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./account.css";
 import { useState } from "react";
-import axios from "axios";
-
+import { UserContext } from "../../App";
 const Login = () => {
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [error, setError] = useState("");
-
-  const handleChange = ({ currentTarget: input }) => {
-    setData({ ...data, [input.name]: input.value });
-  };
+  const { state, dispatch } = useContext(UserContext);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const url = "http://localhost:8080/api/auth";
-      const { data: res } = await axios.post(url, data);
-      localStorage.setItem("token", res.data);
-      window.location = "/";
-      console.log(res.message);
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.status >= 400 &&
-        error.response.status <= 500
-      ) {
-        setError(error.response.data.message);
-      }
+
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+    const data = res.json();
+
+    if (res.status === 400 || !data) {
+      window.alert("Invalid Credentials");
+      console.log("Invalid Credentials");
+    } else {
+      dispatch({ type: "USER", payload: true });
+      // window.alert("Login Successful!");
+      console.log("Login Successfull!");
+      navigate("/");
+      // window.location = "/";
     }
   };
   return (
@@ -46,13 +47,13 @@ const Login = () => {
           </div>
 
           <div className="form-class">
-            <form className="form-group" onSubmit={handleSubmit}>
+            <form className="form-group">
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
-                onChange={handleChange}
-                value={data.email}
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 required
                 className="form-control"
               />
@@ -60,13 +61,16 @@ const Login = () => {
                 type="password"
                 name="password"
                 placeholder="Password"
-                onChange={handleChange}
-                value={data.password}
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
                 required
                 className="form-control"
               />
-              {error && <div className="error_message">{error}</div>}
-              <button type="submit" className="btn highlighted-btn">
+              <button
+                type="submit"
+                className="btn highlighted-btn"
+                onClick={handleSubmit}
+              >
                 Login
               </button>
             </form>

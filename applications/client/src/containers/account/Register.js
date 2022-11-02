@@ -5,12 +5,14 @@ import accountImg from "../../assets/Account/account.svg";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./account.css";
+import { Form } from "react-bootstrap";
 
 const Register = () => {
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
     email: "",
+    userType: "",
     password: "",
   });
 
@@ -23,7 +25,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = "http://localhost:8080/api/users";
+      const url = "/api/users";
       const { data: res } = await axios.post(url, data);
       navigate("/login");
       console.log(res.message);
@@ -84,14 +86,15 @@ const Register = () => {
                 required
                 className="form-control"
               />
-              <label for="userType">Select User Type</label>
+              <Form.Label>Select User Type</Form.Label>
               <select
-                class="form-select"
+                className="form-select"
                 name="userType"
                 id="userType"
                 onChange={handleChange}
+                value={data.userType}
                 required
-                autofocus
+                autoFocus
               >
                 <option value="">Select One</option>
                 <option>Student</option>
@@ -119,3 +122,4 @@ const Register = () => {
 };
 
 export default Register;
+
