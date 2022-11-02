@@ -1,37 +1,50 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarComp from "./components/Navbar";
 import Home from "./containers/home/Home";
-import OpenAI from "./containers/openai/OpenAI";
 import About from "./containers/about/About";
 import Login from "./containers/account/Login";
 import Register from "./containers/account/Register";
 import AboutSnehal from "./containers/about/AboutSnehal";
 import AboutManali from "./containers/about/AboutManali";
-import CodeTotext from "./containers/codeToText/CodeToText";
-import Main from "./containers/main/Main";
+import CodeToText from "./containers/codeToText/CodeToText";
+import TextToCode from "./containers/textToCode/TextToCode";
+import CodeToCode from "./containers/codeToCode/CodeToCode";
 import Feedback from "./containers/feedback/Feedback";
+import ErrorPage from "./containers/errorPage/ErrorPage";
+import Logout from "./containers/account/Logout";
+import { createContext } from "react";
+import { useReducer } from "react";
+import { initialState, reducer } from "../src/reducer/UseReducer";
+export const UserContext = createContext();
+const Routing = () => {
+  return (
+    <Routes>
+      <Route exact path="/" element={<Home />}></Route>
+      <Route exact path="/about" element={<About />}></Route>
+      <Route exact path="/aboutSnehal" element={<AboutSnehal />}></Route>
+      <Route exact path="/aboutManali" element={<AboutManali />}></Route>
+      <Route exact path="/codeToText" element={<CodeToText />}></Route>
+      <Route exact path="/textToCode" element={<TextToCode />}></Route>
+      <Route exact path="/codeToCode" element={<CodeToCode />}></Route>
+      <Route exact path="/feedback" element={<Feedback />}></Route>
+      <Route exact path="/login" element={<Login />}></Route>
+      <Route exact path="/register" element={<Register />}></Route>
+      <Route exact path="/logout" element={<Logout />}></Route>
+      <Route path="*" element={<ErrorPage />}></Route>
+    </Routes>
+  )
+}
+const App = () => {
 
-
-function App() {
-  const user = localStorage.getItem("token")
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
 
     <Router>
-      <NavbarComp />
-      <Routes>
-        {user && <Route path="/" exact element={<Main />}></Route>}
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/about" element={<About />}></Route>
-        <Route path="/openAI" element={<OpenAI />}></Route>
-        <Route path="/aboutSnehal" element={<AboutSnehal />}></Route>
-        <Route path="/aboutManali" element={<AboutManali />}></Route>
-        <Route path="/codeToText" element={<CodeTotext />}></Route>
-        <Route path="/feedback" element={<Feedback />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/register" element={<Register />}></Route>
-        <Route path="/" exact element={<Navigate replace to="/login" />}></Route>
-      </Routes>
+      <UserContext.Provider value={{ state, dispatch }}>
+        <NavbarComp />
+        <Routing />
+      </UserContext.Provider>
     </Router>
 
   );

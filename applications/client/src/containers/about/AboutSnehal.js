@@ -4,33 +4,32 @@ import Image from "react-bootstrap/Image";
 import snehal from "../../assets/About/snehal.png";
 import { Component } from "react";
 class AboutSnehal extends Component {
-  render(){
+  render() {
     return (
       <div className="profile-container">
         <div className="profile-parent">
           <div className="profile-details">
-  
             <div className="profile-details-name">
               <span className="primary-text">
-                Hello! I'M <span className="highlighted-text">Snehal Patil</span>
+                Hello! I'M{" "}
+                <span className="highlighted-text">Snehal Patil</span>
               </span>
             </div>
-  
+
             <div className="profile-details-role">
               <span className="profile-role-tagline">
                 Love building applications with frontend and backend operations.
               </span>
               <span className="profile-role-paragraph">
-                
                 I am a Computer Science Graduate student at San Francisco State
                 University. I am currently in my 3rd semester, planning to
-                graduate in May 2023. I have taken this course to get exposure to
-                frontend and backend technologies and languages. Currently for
-                this project I am learning React and Node.js. I love travelling to
-                different places, also I love playing Tennis!
+                graduate in May 2023. I have taken this course to get exposure
+                to frontend and backend technologies and languages. Currently
+                for this project I am learning React and Node.js. I love
+                travelling to different places, also I love playing Tennis!
               </span>
             </div>
-  
+
             <div className="profile-details-colz">
               <p>
                 Email:
@@ -59,7 +58,6 @@ class AboutSnehal extends Component {
       </div>
     );
   }
-  
 }
 
 export default AboutSnehal;
