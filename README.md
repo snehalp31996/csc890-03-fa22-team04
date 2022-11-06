@@ -1,6 +1,6 @@
 # CSC890-fall22-03-team04 Repository
 
-## Application URL: http://52.53.210.26:3000/
+## Application URL: http://54.177.31.203:3000/
 
 ## Please do the following steps to run the applciation locally
 1. npm install on both client and server
