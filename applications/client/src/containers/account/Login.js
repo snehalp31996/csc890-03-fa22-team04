@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "./account.css";
 import { useState } from "react";
 import { UserContext } from "../../App";
+import { Form, Button } from "react-bootstrap";
+
 const Login = () => {
   const { state, dispatch } = useContext(UserContext);
   const navigate = useNavigate();
@@ -47,33 +49,39 @@ const Login = () => {
           </div>
 
           <div className="form-class">
-            <form className="form-group">
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-                required
-                className="form-control"
-              />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-                required
-                className="form-control"
-              />
-              <button
+            <Form>
+              <Form.Group className="form-group" controlId="email">
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group className='mb-3' controlId="password">
+                <Form.Control
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                  required
+                />
+              </Form.Group>
+
+              <Button
                 type="submit"
-                className="btn highlighted-btn"
+                variant="primary"
+                size="lg"
                 onClick={handleSubmit}
               >
                 Login
-              </button>
-            </form>
+              </Button>
+  
+            </Form>
           </div>
         </div>
 
