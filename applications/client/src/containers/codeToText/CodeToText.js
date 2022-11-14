@@ -4,17 +4,39 @@ import { Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "../../index.css";
 import { UserContext } from "../../App";
+import StarRating from "../../components/StarRating";
+
 const { Configuration, OpenAIApi } = require("openai");
 
 const CodeToText = () => {
   const { state, dispatch } = useContext(UserContext);
-  const navigate = useNavigate();
+  const [response, setResponse] = useState("");
+  const [rating, setRating] = useState(null);
+  const [hover, setHover] = useState(null);
+  const [userDetails, setUserDetails] = useState([]);
+
+  const onMouseEnter = (ratingValue) => {
+    setHover(ratingValue);
+  };
+
+  const onMouseLeave = () => {
+    setHover(null);
+  };
+
+  const onClick = (ratingValue) => {
+    setRating(ratingValue);
+  };
+
   const [userData, setUserData] = useState({
     email: "",
     question: "",
     answer: "",
     feedback: "",
+    userRating: null,
   });
+
+  const navigate = useNavigate();
+
   const callCodeToText = async () => {
     try {
       const res = await fetch("/api/auth/codeToText", {
@@ -26,7 +48,7 @@ const CodeToText = () => {
         credentials: "include",
       });
       const data = await res.json();
-      console.log(data);
+      setUserDetails(data);
       dispatch({ type: "USER", payload: true });
       if (!res.status === 200) {
         const error = new Error(res.error);
@@ -40,22 +62,14 @@ const CodeToText = () => {
 
   useEffect(() => {
     callCodeToText();
-  });
-
-  const [response, setResponse] = useState(
-    "....... await the response, might take a few seconds!"
-  );
+  }, []);
 
   const onFormSubmit = (e) => {
     e.preventDefault();
-
     const formData = new FormData(e.target),
       formDataObj = Object.fromEntries(formData.entries());
 
-    console.log(formDataObj.productName);
-
     //OPENAI
-
     const configuration = new Configuration({
       apiKey: process.env.REACT_APP_OPENAI_API_KEY,
     });
@@ -64,7 +78,7 @@ const CodeToText = () => {
     openai
       .createCompletion({
         model: "code-davinci-002",
-        prompt: `${formDataObj.productName}\n\n\\"\\"\\"\nHere's what the above class is doing:\n`,
+        prompt: `${formDataObj.question}\n\n\\"\\"\\"\nHere's what the above class is doing:\n`,
         temperature: 0.8,
         max_tokens: 256,
         top_p: 1,
@@ -74,22 +88,25 @@ const CodeToText = () => {
       })
       .then((response) => {
         setResponse(response.data.choices[0].text);
+        setUserData({
+          ...userData,
+          email: userDetails.email,
+          answer: response.data.choices[0].text,
+        });
       });
   };
 
   const handleInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-
     setUserData({ ...userData, [name]: value });
   };
 
   const submitFeedback = async (e) => {
     e.preventDefault();
 
-    const { email, question, answer, feedback } = userData;
+    const { email, question, answer, feedback, userRating } = userData;
 
-    console.log("hello from submit feedback");
     const res = await fetch("/api/auth/codeToText", {
       method: "POST",
       headers: {
@@ -100,6 +117,7 @@ const CodeToText = () => {
         question,
         answer,
         feedback,
+        userRating,
       }),
     });
     const data = await res.json();
@@ -113,6 +131,7 @@ const CodeToText = () => {
         question: "",
         answer: "",
         feedback: "",
+        userRating: "",
       });
     }
   };
@@ -131,11 +150,12 @@ const CodeToText = () => {
             <Form.Group className="mb-3">
               <Form.Label> What Code you want to undertsand?</Form.Label>
               <Form.Control
+                required
                 as="textarea"
-                name="productName"
-                placeholder="Enter Code"
-                className="feedback_form_question"
+                name="question"
+                placeholder="Enter your code"
                 rows={5}
+                onChange={handleInput}
               />
               <Form.Text className="text-muted">
                 Enter as much information as possible for more accurate
@@ -145,6 +165,11 @@ const CodeToText = () => {
             <Button variant="primary" size="lg" type="submit">
               Get AI Suggestions
             </Button>
+            <Form.Group>
+              <Form.Text>
+                ....... await the response, might take a few seconds!
+              </Form.Text>
+            </Form.Group>
           </Form>
         </Col>
       </Row>
@@ -152,6 +177,9 @@ const CodeToText = () => {
       <br />
       <Card>
         <Card.Body>
+          <Card.Title>
+            <h3>Code Explanation</h3>
+          </Card.Title>
           <br />
           <Card.Text>
             <pre>{response}</pre>
@@ -164,70 +192,82 @@ const CodeToText = () => {
       <Row>
         <div className="mb-3">
           <div className="form">
-            <Form>
+            <Form onSubmit={submitFeedback}>
               <Form.Group method="POST" className="mb-3">
-                    <Form.Group className='mb-3'>
-                        <Form.Label>Enter your registered email</Form.Label>
-                        <Form.Control
-                            type="email"
-                            value={userData.email}
-                            onChange={handleInput}
-                            placeholder="Email"
-                            id="feedback_form_email"
-                            name="email"
-                            className="feedback_form_email"
-                            required
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Enter your registered email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    value={userDetails.email}
+                    placeholder="Email"
+                    id="feedback_form_email"
+                    name="email"
+                    className="feedback_form_email"
+                    required
+                  />
+                </Form.Group>
 
-                    <Form.Group className='mb-3'>
-                        <Form.Label>Enter the question</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            value={userData.question}
-                            onChange={handleInput}
-                            name="question"
-                            placeholder="Question"
-                            className="feedback_form_question"
-                            rows={5}
-                            required
-                        />
-                    </Form.Group>
-                    
-                    <Form.Group className='mb-3'>
-                        <Form.Label>Enter the output generated</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            value={userData.answer}
-                            onChange={handleInput}
-                            name="answer"
-                            placeholder="Answer Generated"
-                            className="feedback_form_answer"
-                            rows={5}
-                            required
-                        />
-                    </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Enter the question</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={userData.question}
+                    name="question"
+                    placeholder="Question"
+                    className="feedback_form_question"
+                    rows={5}
+                    required
+                  />
+                </Form.Group>
 
-                    <Form.Group>
-                        <Form.Label>Enter your feedback</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            value={userData.feedback}
-                            onChange={handleInput}
-                            name="feedback"
-                            placeholder="Write your feedback"
-                            className="feedback_form_feedback"
-                            rows={5}
-                            required
+                <Form.Group className="mb-3">
+                  <Form.Label>Enter the output generated</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={response}
+                    name="answer"
+                    placeholder="Answer Generated"
+                    className="feedback_form_answer"
+                    rows={5}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Enter your feedback</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={userData.feedback}
+                    onChange={handleInput}
+                    name="feedback"
+                    placeholder="Write your feedback"
+                    className="feedback_form_feedback"
+                    rows={5}
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Rate the response</Form.Label>
+                  <br />
+                  <div className="star">
+                    {[1, 2, 3, 4, 5].map((ratingValue) => {
+                      return (
+                        <StarRating
+                          ratingValue={ratingValue}
+                          hover={hover}
+                          rating={rating}
+                          userData={userData}
+                          onMouseEnter={onMouseEnter}
+                          onMouseLeave={onMouseLeave}
+                          onClick={onClick}
+                          onChange={handleInput}
                         />
-                    </Form.Group>
+                      );
+                    })}
+                  </div>
+                </Form.Group>
               </Form.Group>
-              <Button
-                variant="primary"
-                size="lg"
-                type="submit"
-                onClick={submitFeedback}
-              >
+              <Button variant="primary" size="lg" type="submit">
                 Submit Feedback
               </Button>
             </Form>

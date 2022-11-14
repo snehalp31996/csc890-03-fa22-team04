@@ -50,6 +50,7 @@ const Feedback = () => {
             <th>Input Question</th>
             <th>Output Answer</th>
             <th>Student Feedback</th>
+            <th>Response Rating</th>
           </tr>
         </thead>
 
@@ -58,13 +59,14 @@ const Feedback = () => {
             feedbacks.map(userFeedback => {
               return (
                 <>
-                  {userFeedback.feedbacks && userFeedback.feedbacks.map(feedback => {
+                  {userFeedback.feedbacks && userFeedback.feedbacks.map((feedback) => {
                     return (
-                    <tr key={feedback._id}>
+                    <tr>
                       <td>{feedback.email}</td>
                       <td>{feedback.question}</td>
                       <td>{feedback.answer}</td>
                       <td>{feedback.feedback}</td>
+                      <td>{feedback.userRating}</td>
                     </tr>
                     )
                   })}
