@@ -10,7 +10,7 @@ import "../../index.css";
 
 const Home = () => {
   return (
-    <div className="div-container">
+    <div className="div-container" data-testid={"home-1"}>
       <br />
       <div className="div-containerrow">
         <h1> CSC 890 Graduate Seminar Project</h1>
@@ -22,7 +22,7 @@ const Home = () => {
       </div>
       <br />
       <Row>
-        <Col>
+        <Col data-testid='button1'>
           <div className="icon-picture">
             <Image
               src={image1}
@@ -33,11 +33,11 @@ const Home = () => {
           <Card
             header="Code To Text"
             title="Translate Code to Natural Language"
-            text="Explain a complicated piece of code. User can input the code in the text box."
+            text="Explain a complicated piece of code. User can input the code in the text box and get the generated explanation for it."
             theLink="/codeToText"
           />
         </Col>
-        <Col>
+        <Col data-testid='button2'>
           <div className="icon-picture">
             <Image
               src={image2}
@@ -52,7 +52,7 @@ const Home = () => {
             theLink="/textToCode"
           />
         </Col>
-        <Col>
+        <Col data-testid='button3'>
           <div className="icon-picture">
             <Image
               src={image3}

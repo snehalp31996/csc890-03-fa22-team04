@@ -60,6 +60,14 @@ body {
   background-color: rgb(92, 90, 90);
 }
 
+.card-body {
+  max-width: 100%;
+}
+
+.feedback_form_email {
+  resize: none;
+}
+
 .btn {
   border-radius: 50px;
   padding: 20px 0;

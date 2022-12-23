@@ -3,12 +3,11 @@ import React from "react";
 import Image from "react-bootstrap/Image";
 import accountImg from "../../assets/Account/account.svg";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./account.css";
 import { Form, Button } from "react-bootstrap";
 
 const Register = () => {
-  const [data, setData] = useState({
+  const [user, setUser] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -16,31 +15,33 @@ const Register = () => {
     password: "",
   });
 
-  const [error, setError] = useState("");
   const navigate = useNavigate();
   const handleChange = ({ currentTarget: input }) => {
-    setData({ ...data, [input.name]: input.value });
+    setUser({ ...user, [input.name]: input.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const url = "/api/users";
-      const { data: res } = await axios.post(url, data);
-      navigate("/login");
-      console.log(res.message);
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.status >= 400 &&
-        error.response.status <= 500
-      ) {
-        setError(error.response.data.message);
-      }
+    const { firstName, lastName, email, userType, password } = user;
+    const res = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ firstName, lastName, email, userType, password }),
+    });
+    const data = await res.json();
+    if (data.status === 422 || !data) {
+      window.alert("Invalid Registration");
+      console.log("Invalid Registration");
+    } else {
+      window.alert("Registration Successfull!");
+      console.log("Registration Successfull!");
+      navigate("/login", { replace: true });
     }
   };
   return (
-    <div className="base-container">
+    <div className="base-container" data-testid="testing">
       <span className="box square border border-dark">
         <div className="header">Register</div>
         <div className="content">
@@ -50,59 +51,59 @@ const Register = () => {
 
           <div className="form-class">
             <Form onSubmit={handleSubmit}>
-              <Form.Group className='mb-3' controlId='firstName'>
+              <Form.Group className="mb-3" controlId="firstName">
                 <Form.Control
                   type="text"
                   name="firstName"
                   placeholder="First Name"
                   onChange={handleChange}
-                  value={data.firstName}
+                  value={user.firstName}
                   required
                 />
               </Form.Group>
 
-              <Form.Group className='mb-3' controlId='lastName'>
+              <Form.Group className="mb-3" controlId="lastName">
                 <Form.Control
                   type="text"
                   name="lastName"
                   placeholder="Last Name"
                   onChange={handleChange}
-                  value={data.lastName}
+                  value={user.lastName}
                   required
                 />
               </Form.Group>
 
-              <Form.Group className='mb-3' controlId='email'>
+              <Form.Group className="mb-3" controlId="email">
                 <Form.Control
                   type="email"
                   name="email"
                   placeholder="Email"
                   onChange={handleChange}
-                  value={data.email}
+                  value={user.email}
                   required
                 />
               </Form.Group>
 
-              <Form.Group className='mb-3' controlId='password'>
+              <Form.Group className="mb-3" controlId="password">
                 <Form.Control
                   type="password"
                   name="password"
                   placeholder="Password"
                   onChange={handleChange}
-                  value={data.password}
+                  value={user.password}
                   required
                 />
               </Form.Group>
 
-              <Form.Group className='mb-3' controlId='userType'>
+              <Form.Group className="mx-3" controlId="userType">
                 <Form.Select
                   name="userType"
                   onChange={handleChange}
-                  value={data.userType}
+                  value={user.userType}
                   required
                   autoFocus
                 >
-                  <option value="">Select One</option>
+                  <option value="">Select Role</option>
                   <option>Student</option>
                   <option>Professor</option>
                   <option>Employee</option>
@@ -110,11 +111,11 @@ const Register = () => {
               </Form.Group>
 
               <br />
-              {error && <div className="error_message">{error}</div>}
-              <Button type="submit" variant="primary" size="lg">
-                Register
-              </Button>
-
+              <div className="mx-3">
+                <Button type="submit" variant="primary" size="lg">
+                  Register
+                </Button>
+              </div>
             </Form>
           </div>
         </div>

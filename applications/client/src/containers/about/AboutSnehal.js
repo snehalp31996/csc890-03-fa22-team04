@@ -3,6 +3,7 @@ import "../../index.css";
 import Image from "react-bootstrap/Image";
 import snehal from "../../assets/About/snehal.png";
 import { Component } from "react";
+
 class AboutSnehal extends Component {
   render() {
     return (
@@ -17,7 +18,7 @@ class AboutSnehal extends Component {
             </div>
 
             <div className="profile-details-role">
-              <span className="profile-role-tagline">
+              <span className="profile-role-tagline" role="introduction">
                 Love building applications with frontend and backend operations.
               </span>
               <span className="profile-role-paragraph">
@@ -33,13 +34,21 @@ class AboutSnehal extends Component {
             <div className="profile-details-colz">
               <p>
                 Email:
-                <a href="mailto:spatil2@mail.sfsu.edu" className="link-info">
+                <a
+                  href="mailto:spatil2@mail.sfsu.edu"
+                  className="link-info"
+                  role="email"
+                >
                   spatil2@mail.sfsu.edu
                 </a>
               </p>
               <p>
                 Github Username:
-                <a href="https://github.com/snehalp396" className="link-info">
+                <a
+                  href="https://github.com/snehalp396"
+                  className="link-info"
+                  role="github"
+                >
                   snehalp396
                 </a>
               </p>

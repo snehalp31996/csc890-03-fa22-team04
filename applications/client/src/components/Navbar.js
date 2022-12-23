@@ -3,15 +3,44 @@ import Navbar from "react-bootstrap/Navbar";
 import logo from "../assets/Home/logo192.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { UserContext } from "../App";
-import { Link } from "react-router-dom";
-import React, { useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
 
 const NavbarComp = () => {
   const { state, dispatch } = useContext(UserContext);
+  const [userType, setUserType] = useState("");
+
+  const navigate = useNavigate();
+
+  const fetchUserType = async () => {
+    try {
+      const res = await fetch("/api/auth/getUserType", {
+        method: "GET",
+        headers: {
+          Accept: "appllication/json",
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      const data = await res.json();
+      setUserType(data.userType);
+      dispatch({ type: "USER", payload: true });
+
+      if (!res.status === 200) {
+        const error = new Error(res.error);
+        throw error;
+      }
+    } catch (error) {
+      console.log(error);
+      navigate("/");
+    }
+  };
+
+  useEffect(() => {}, [state]);
 
   useEffect(() => {
-    console.log(state);
-  }, [state]);
+    fetchUserType();
+  }, []);
 
   return (
     <div>
@@ -41,14 +70,17 @@ const NavbarComp = () => {
               {" "}
               Home{" "}
             </Link>
-            <Link
-              to="/feedback"
-              className="navbar-text"
-              style={{ textDecoration: "none" }}
-            >
-              {" "}
-              Feedback{" "}
-            </Link>
+            {state && userType === "Professor" && (
+              <Link
+                to="/feedback"
+                className="navbar-text"
+                style={{ textDecoration: "none" }}
+              >
+                {" "}
+                Feedback{" "}
+              </Link>
+            )}
+
             <Link
               to="/about"
               className="navbar-text"

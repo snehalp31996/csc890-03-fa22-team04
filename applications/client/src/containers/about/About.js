@@ -4,7 +4,6 @@ import manali from "../../assets/About/manali.png";
 import { Link } from "react-router-dom";
 import "../../index.css";
 import React from "react";
-import { Component } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
 const About = () => {
@@ -26,8 +25,8 @@ const About = () => {
                 className="profile-picture-adjust"
               ></Image>
             </div>
-            <h2> Snehal Patil </h2>
-            <h4> Team Leader </h4>
+            <h2 role="name1"> Snehal Patil </h2>
+            <h4 role="role1"> Team Leader </h4>
             <h5>
               {" "}
               Email:{" "}
@@ -47,8 +46,8 @@ const About = () => {
             <br />
             <div className="profile-options">
               <Link to="/AboutSnehal">
-                <button className="btn highlighted-btn">
-                  <h4> About Me! </h4>
+                <button className="btn highlighted-btn" data-testid="button1">
+                 <h4>About Me!</h4>
                 </button>
               </Link>
             </div>
@@ -82,8 +81,8 @@ const About = () => {
             <br />
             <div className="profile-options">
               <Link to="/AboutManali">
-                <button className="btn highlighted-btn">
-                  <h4> About Me! </h4>
+                <button className="btn highlighted-btn" data-testid="button2">
+                  <h4>About Me!</h4>
                 </button>
               </Link>
             </div>

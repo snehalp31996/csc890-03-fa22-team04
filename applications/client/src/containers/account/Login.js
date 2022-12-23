@@ -32,14 +32,13 @@ const Login = () => {
       console.log("Invalid Credentials");
     } else {
       dispatch({ type: "USER", payload: true });
-      // window.alert("Login Successful!");
+      window.alert("Login Successfull!");
       console.log("Login Successfull!");
-      navigate("/");
-      // window.location = "/";
+      navigate("/", { replace: true });
     }
   };
   return (
-    <div className="base-container">
+    <div className="base-container" data-testid="login-1">
       <span className="box square border border-dark">
         <div className="header">Login</div>
 
@@ -50,7 +49,7 @@ const Login = () => {
 
           <div className="form-class">
             <Form>
-              <Form.Group className="form-group" controlId="email">
+              <Form.Group className="mb-3" controlId="email">
                 <Form.Control
                   type="email"
                   name="email"
@@ -61,7 +60,7 @@ const Login = () => {
                 />
               </Form.Group>
 
-              <Form.Group className='mb-3' controlId="password">
+              <Form.Group className="mb-3" controlId="password">
                 <Form.Control
                   type="password"
                   name="password"
@@ -71,16 +70,16 @@ const Login = () => {
                   required
                 />
               </Form.Group>
-
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                onClick={handleSubmit}
-              >
-                Login
-              </Button>
-  
+              <div className="mx-3">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  onClick={handleSubmit}
+                >
+                  Login
+                </Button>
+              </div>
             </Form>
           </div>
         </div>

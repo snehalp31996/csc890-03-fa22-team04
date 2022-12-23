@@ -7,7 +7,7 @@ module.exports = () => {
   };
 
   try {
-    mongoose.connect(process.env.DB, connectionParams);
+    mongoose.connect(process.env.DB, connectionParams).catch(console.error);
     console.log("Connected to MongoDB successfully");
   } catch (error) {
     console.log(error);

@@ -1,9 +1,8 @@
-import { useState} from 'react';
 import { FaStar } from 'react-icons/fa';
 
 const StarRating = (props) => {
 
-    const {ratingValue, rating, hover, userData, onClick, onMouseEnter, onMouseLeave, onChange} = props;
+    const {ratingValue, rating, hover, onClick, onMouseEnter, onMouseLeave, onChange } = props;
 
   return (
     <div>
@@ -16,11 +15,12 @@ const StarRating = (props) => {
                 onChange={onChange}
             /> 
             <FaStar
-                className="star" 
+                className={ratingValue <= (hover || rating) ? "yellow" : "grey"}
                 color={ratingValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
                 size={45}
                 onMouseEnter={() => onMouseEnter(ratingValue)}
                 onMouseLeave={() => onMouseLeave}
+                data-testid='stars'
             /> 
         </label>
     </div>
